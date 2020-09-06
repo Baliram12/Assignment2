@@ -1,0 +1,250 @@
+/*The CREATE DATABASE statement is used to create a new SQL database.*/
+CREATE DATABASE Bank
+GO
+/*use the database name*/
+USE Bank
+GO
+/* CREATE SCHEMA*/
+CREATE SCHEMA Management;
+GO
+CREATE SCHEMA Accounts;
+GO
+CREATE SCHEMA Accounting;
+GO
+CREATE SCHEMA Transactions;
+GO
+/*The CREATE TABLE statement is used to create a new table in a database.*/
+CREATE TABLE Management.Locations
+(
+    LocationCode nvarchar(10) UNIQUE NOT NULL,
+    Location     nvarchar(50) NOT NULL,
+    [Address]    nvarchar(50),
+    City         nvarchar(50),
+    [State]      nvarchar(50),
+    ZIPCode      nvarchar(12),
+    Country      nvarchar(100),
+   
+    CONSTRAINT PK_Locations PRIMARY KEY (LocationCode)
+);
+GO
+/*The CREATE TABLE statement is used to create a new table in a database.*/
+
+CREATE TABLE Management.Employees
+(
+    EmployeeNumber nvarchar(10) not null,
+    FirstName nvarchar(25),
+    MiddleName nvarchar(25),
+    LastName nvarchar(25) NOT NULL,
+    LocationCode nvarchar(10),
+    Title nvarchar(50),
+    CanCreateAccount bit,
+    EmailAddress nvarchar(50),
+    WorkPhone nvarchar(20),
+    Extension smallint,
+    [Address] nvarchar(50),
+    City nvarchar(40),
+    [State] nvarchar(40),
+    ZIPCode nvarchar(12),
+    Country nvarchar(50),
+    PhoneNumber nvarchar(20),
+    HourlySalary money,
+    CONSTRAINT PK_Employees PRIMARY KEY (EmployeeNumber),
+    CONSTRAINT FK_EmployeesLocations FOREIGN KEY(LocationCode) REFERENCES Management.Locations(LocationCode)
+);
+GO
+/*The CREATE TABLE statement is used to create a new table in a database.*/
+
+CREATE TABLE Management.AccountTypes
+(
+    AccountType nvarchar(25) NOT NULL, 
+ 
+    CONSTRAINT PK_AccountTypes PRIMARY KEY (AccountType)
+);
+GO
+
+/*The CREATE TABLE statement is used to create a new table in a database.*/
+
+CREATE TABLE Accounts.Customers
+(
+    AccountNumber nvarchar(20) not null,
+    DateCreated date,
+    EmployeeNumber nvarchar(10),
+    AccountType nvarchar(25),
+    FirstName nvarchar(25),
+    MiddleName nvarchar(25),
+    LastName nvarchar(25) NOT NULL,
+    [Address] nvarchar(50) NOT NULL,
+    City nvarchar(40) NOT NULL,
+    [State] nvarchar(40) NOT NULL,
+    ZIPCode nvarchar(12) NOT NULL,
+    PhoneNumber nvarchar(20) NOT NULL,
+    WorkPhone nvarchar(20),
+    DateUpdated date,
+    AccountStatus nvarchar(25),
+  
+    Constraint PK_Customers PRIMARY KEY (AccountNumber),
+    Constraint FK_AccountCreator Foreign Key(EmployeeNumber) References Management.Employees(EmployeeNumber),
+    Constraint FK_TypeOfAccount Foreign Key(AccountType) References Management.AccountTypes(AccountType)
+);
+GO
+
+/*The CREATE TABLE statement is used to create a new table in a database.*/
+
+CREATE TABLE Transactions.Deposits
+(
+    DepositID      int identity(1, 1) not null,
+    LocationCode   nvarchar(10) not null,
+    EmployeeNumber nvarchar(10),
+    AccountNumber  nvarchar(20) not null,
+    DepositDate    date not null,
+    DepositAmount  money not null,
+  
+    CONSTRAINT PK_Deposits PRIMARY KEY (DepositID),
+    Constraint FK_DepositLocation Foreign Key(LocationCode) References Management.Locations(LocationCode),
+    Constraint FK_Clerk Foreign Key(EmployeeNumber) References Management.Employees(EmployeeNumber),
+    Constraint FK_CustomerAccount Foreign Key(AccountNumber) References Accounts.Customers(AccountNumber)
+);
+GO
+
+/*The CREATE TABLE statement is used to create a new table in a database.*/
+
+CREATE TABLE Transactions.Withdrawals
+(
+    WithdrawalD int identity(1, 1) NOT NULL,
+    LocationCode   nvarchar(10) NOT NULL,
+    EmployeeNumber nvarchar(10),
+    AccountNumber  nvarchar(20) NOT NULL,
+    WithdrawalDate date NOT NULL,
+    WithdrawalAmount money NOT NULL,
+    ServiceChargeApplied money,
+  
+    CONSTRAINT PK_Withdrawals PRIMARY KEY(WithdrawalD),
+    Constraint FK_WithdrawlLocation Foreign Key(LocationCode) References Management.Locations(LocationCode),
+    Constraint FK_Employee Foreign Key(EmployeeNumber) References Management.Employees(EmployeeNumber),
+    Constraint FK_AccountNumber Foreign Key(AccountNumber) References Accounts.Customers(AccountNumber)
+);
+GO
+/*The CREATE TABLE statement is used to create a new table in a database.*/
+
+CREATE TABLE Transactions.CheckCashing
+(
+    CheckCashingID int identity(1, 1) NOT NULL,
+    LocationCode   nvarchar(10) not null,
+    EmployeeNumber nvarchar(10),
+    AccountNumber  nvarchar(20) not null,
+    CheckNumber int,
+    Recipient nvarchar(50) NOT NULL,
+    DateProcessed date NOT NULL,
+    CheckAmount money NOT NULL,
+    HasEnoughFunds bit Default 1,
+    ServiceChargeAmount money default 0.00,
+  
+    Constraint FK_CashingLocation Foreign Key(LocationCode) References Management.Locations(LocationCode),
+    Constraint FK_CashingEmployee Foreign Key(EmployeeNumber) References Management.Employees(EmployeeNumber),
+    Constraint FK_CashingCustomer Foreign Key(AccountNumber) References Accounts.Customers(AccountNumber),
+    CONSTRAINT PK_CheckCashing PRIMARY KEY (CheckCashingID)
+);
+GO
+
+/*The CREATE TABLE statement is used to create a new table in a database.*/
+
+CREATE TABLE Management.DatabaseOperations
+(
+    OperationID int identity(1,1) NOT NULL,
+    ObjectType nchar(20) ,
+    ObjectName nvarchar(40),
+    PerformedBy nvarchar(50),
+    ActionPerformed nvarchar(max),
+    TimePerformed datetime,
+    CONSTRAINT PK_Operations PRIMARY KEY(OperationID)
+);
+GO
+
+
+/*The SQL INSERT INTO Statement is used to add new rows of data to a table in the database.*/
+
+INSERT INTO Management.Locations(LocationCode, Location, City, [State], ZIPCode)
+VALUES('XYX0102', 'GKP', 'Gorakhpur', 'UP', '274252'),
+      ('0CLGPK', ' Building', 'College Park', 'UP', '20314');
+GO
+
+/*The SQL SELECT statement is used to fetch the data from a database table which returns this data in the form of a result table*/
+SELECT * FROM Management.Locations;
+
+/*The SQL INSERT INTO Statement is used to add new rows of data to a table in the database.*/
+
+INSERT INTO Management.AccountTypes(AccountType)
+VALUES('Checking'),
+      ('Saving'),
+      ('CD');
+GO
+
+/*The SQL SELECT statement is used to fetch the data from a database table which returns this data in the form of a result table*/
+
+SELECT * FROM Management.AccountTypes;
+
+/*The SQL INSERT INTO Statement is used to add new rows of data to a table in the database.*/
+
+INSERT INTO Management.Employees(EmployeeNumber, FirstName, LastName, LocationCode, Title, [Address], City, [State], ZIPCode)
+VALUES('12121', 'Baliram', 'Chauhan', 'XYX0102', 'Mr', 'gkp', 'gkp', 'UP', '20004');
+GO
+
+/*The SQL SELECT statement is used to fetch the data from a database table which returns this data in the form of a result table*/
+SELECT * FROM Management.Employees;
+
+/*The SQL INSERT INTO Statement is used to add new rows of data to a table in the database.*/
+INSERT INTO Management.DatabaseOperations VALUES('Table','Customer','ABC','Processing','2020-05-12 08:23:12');
+
+/*The SQL SELECT statement is used to fetch the data from a database table which returns this data in the form of a result table*/
+SELECT * FROM Management.DatabaseOperations;
+
+
+/* Creating a DML Trigger*/
+
+/*Creating a Trigger FOR Accounts.ForCustomers */
+CREATE TRIGGER Accounts.ForCustomers
+ON Accounts.Customers
+AFTER INSERT
+AS
+BEGIN
+    INSERT INTO Management.DatabaseOperations
+    VALUES(default, N'Customers', SUSER_SNAME(), 
+	       N'Processed a deposit', GETDATE())
+END
+GO
+/*Creating a Trigger FOR Transactions.ForDeposits */
+
+CREATE TRIGGER Transactions.ForDeposits
+ON Transactions.Deposits
+AFTER INSERT
+AS
+BEGIN
+    INSERT INTO Management.DatabaseOperations
+    VALUES(default, N'Deposits', SUSER_SNAME(), 
+	       N'Processed a deposit', GETDATE())
+END
+GO
+/*Creating a Trigger FOR Transactions.ForWithdrawals */
+
+CREATE TRIGGER Transactions.ForWithdrawals
+ON Transactions.Withdrawals
+AFTER INSERT
+AS
+BEGIN
+    INSERT INTO Management.DatabaseOperations
+    VALUES(default, N'Withdrawals', SUSER_SNAME(), 
+	   N'Processed a withdrawal', GETDATE())
+END
+GO
+
+/*Deleting With a DML Trigger*/
+CREATE TRIGGER Transactions.DepositDeleted
+ON Transactions.Deposits
+AFTER DELETE
+AS
+BEGIN
+    INSERT INTO Management.DatabaseOperations
+    VALUES(default, N'Deposits', SUSER_SNAME(), 
+	   N'Deleted a deposit from a bank account.', GETDATE())
+END
+GO
