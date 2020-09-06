@@ -58,8 +58,7 @@ VALUES('Personal Loan', 'This is loan given to a customer who wants a cash loan.
       ('Car Financing', 'This loan will be processed by our partners as car dealers.'),
       ('Musical Instrument', ' This is the type of loan only for musical.');
 GO
-
-/*The SQL INSERT INTO Statement is used to add new rows of data to a table in the database.*/
+/*The SQL SELECT statement is used to fetch the data from a database table which returns this data in the form of a result table*/
  SELECT * FROM loanTypes;
 
  /*The SQL INSERT INTO Statement is used to add new rows of data to a table in the database.*/
@@ -69,7 +68,7 @@ INSERT INTO Customers VALUES(92704932, '2020-05-23', 'Hari ', 'Chauhan', 'Gorakh
 INSERT INTO Customers VALUES(92704933, '2020-05-23', 'Manish ', 'Chauhan', 'Gorakhpur', 'Deoria', 'UP', '2203', 'balichauhan1997@gmail.com');
 GO
 
-/*The SQL INSERT INTO Statement is used to add new rows of data to a table in the database.*/
+/*The SQL SELECT statement is used to fetch the data from a database table which returns this data in the form of a result table*/
  
 SELECT * FROM Customers;
 
