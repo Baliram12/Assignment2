@@ -1,0 +1,140 @@
+/*The CREATE DATABASE statement is used to create a new SQL database.*/
+/*DATABASE name is LOAN*/
+CREATE DATABASE loan;
+GO
+/*use the database name*/
+USE loan
+GO
+/*The CREATE TABLE statement is used to create a new table in a database.*/
+CREATE TABLE Employees
+(
+    EmployeeNumber varchar(10) NOT NULL,
+    FirstName varchar(20) NULL,
+    LastName varchar(10),
+    FullName AS LastName + N', ' + FirstName,
+    Title varchar(100),
+    MonthlySalary money,
+    Username varchar(20),
+    Password varchar(20),
+    CONSTRAINT PK_Employees PRIMARY KEY(EmployeeNumber)
+)
+GO
+/*The CREATE TABLE statement is used to create a new table in a database.*/
+CREATE TABLE loanTypes
+(
+    LoanType nvarchar(25) NOT NULL,
+    TypeDesctiption nvarchar(max),
+    CONSTRAINT PK_Types PRIMARY KEY(LoanType)
+);
+GO
+/*The CREATE TABLE statement is used to create a new table in a database.*/
+CREATE TABLE Customers
+(
+    AccountNumber varchar(10) NOT NULL,
+    DateCreated date NULL,
+    FirstName varchar(25),
+    LastName varchar(25) NOT NULL,
+    [Address] varchar(100),
+    City varchar(50),
+    [State] varchar(50),
+    ZIPCode varchar(10),
+    EmailAddress varchar(100),
+    CONSTRAINT PK_Customers PRIMARY KEY(AccountNumber)
+)
+GO
+/*The SQL INSERT INTO Statement is used to add new rows of data to a table in the database.*/
+
+INSERT INTO Employees VALUES(29747, 'Baliram',    'Chauhan',  'Accounts Manager', 22024,'bali70',12345);
+INSERT INTO Employees VALUES(29748, 'Ravi',    'Kumar',  'Loan Specialist', 32024,'ravi70',12345);
+INSERT INTO Employees VALUES(29749, 'Mahesh',    'K',  'Accounts Representative', 26624,'Mahesh123',12345);
+INSERT INTO Employees VALUES(29750, 'Adersh',    'Ramesan',  'Accounts Representative', 26624,'adersh70',12345);
+GO
+/*The SQL SELECT statement is used to fetch the data from a database table which returns this data in the form of a result table*/
+SELECT * FROM Employees;
+
+/*The SQL INSERT INTO Statement is used to add new rows of data to a table in the database.*/
+INSERT INTO loanTypes
+VALUES('Personal Loan', 'This is loan given to a customer who wants a cash loan.'),
+      ('Car Financing', 'This loan will be processed by our partners as car dealers.'),
+      ('Musical Instrument', ' This is the type of loan only for musical.');
+GO
+
+/*The SQL INSERT INTO Statement is used to add new rows of data to a table in the database.*/
+ SELECT * FROM loanTypes;
+
+ /*The SQL INSERT INTO Statement is used to add new rows of data to a table in the database.*/
+INSERT INTO Customers VALUES(92704930, '2020-05-23', 'Baliram ', 'Chauhan', 'Gorakhpur', 'Deoria', 'UP', '274203', 'balichauhan1997@gmail.com');
+INSERT INTO Customers VALUES(92704931, '2020-05-23', 'Mohit ', 'Chauhan', 'Gorakhpur', 'Gorakhpur', 'UP', '52503', 'balichauhan1997@gmail.com');
+INSERT INTO Customers VALUES(92704932, '2020-05-23', 'Hari ', 'Chauhan', 'Gorakhpur', 'Deoria', 'UP', '203', 'balichauhan1997@gmail.com');
+INSERT INTO Customers VALUES(92704933, '2020-05-23', 'Manish ', 'Chauhan', 'Gorakhpur', 'Deoria', 'UP', '2203', 'balichauhan1997@gmail.com');
+GO
+
+/*The SQL INSERT INTO Statement is used to add new rows of data to a table in the database.*/
+ 
+SELECT * FROM Customers;
+
+/*Stored Procedures*/
+/*CREATE Stored Procedure*/
+CREATE PROCEDURE sp_showinformation
+AS
+    SELECT ALL * FROM loanTypes;
+    SELECT ALL * FROM Customers;
+GO
+/*To execute a stored procedure, you use the EXEC or the EXECUTE keyword */
+
+EXECUTE sp_showinformation;
+GO
+/*CREATE Stored Procedure for Managing Procedures*/
+CREATE PROCEDURE sp_getcustomer
+AS
+SET NOCOUNT ON
+BEGIN
+    SELECT FirstName, LastName, City
+    FROM Customers
+END
+GO
+
+/*To execute a stored procedure, you use the EXEC or the EXECUTE keyword */
+
+EXECUTE  sp_getcustomer;
+GO
+
+/*CREATE Stored Procedure for Encrypting the Code of a Stored Procedure*/
+
+CREATE PROCEDURE sp_Getcustomeridentification
+WITH ENCRYPTION
+AS
+SET NOCOUNT ON
+    SELECT FirstName, LastName, AccountNumber, EmailAddress
+    FROM Customers;    
+GO
+/*To execute a stored procedure, you use the EXEC or the EXECUTE keyword */
+
+EXECUTE  sp_Getcustomeridentification;
+GO
+/*CREATE Stored Procedure for Using Expressions and Functions*/
+CREATE PROCEDURE sp_getemployeeusernamepassword
+AS
+BEGIN
+    SET NOCOUNT ON
+    SELECT FullName = FirstName + ' ' + LastName, Username, Password
+    FROM Employees
+END
+GO
+/*To execute a stored procedure, you use the EXEC or the EXECUTE keyword */
+EXECUTE  sp_getemployeeusernamepassword;
+GO
+/*CREATE Stored Procedure for Executing an Argumentative Stored Procedure*/
+CREATE PROCEDURE sp_identifycustomersbystate
+	@Actnum INT,
+	@StateOrProvince char(2)
+AS
+BEGIN
+    SELECT FullName = LastName + ', ' + FirstName, City,EmailAddress
+    FROM Customers
+    WHERE (AccountNumber = @Actnum) AND (State = @StateOrProvince);
+END
+GO
+/*To execute a stored procedure, you use the EXEC or the EXECUTE keyword */
+ EXEC sp_identifycustomersbystate 92704930, 'UP';
+GO
